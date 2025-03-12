@@ -2,7 +2,9 @@
 /50.0 - When divide integer
 like "%Tennis%" - String search
 like "T_nnis%" - One character search
-where joindate > '2012-09-01'; - Date filter
+where joindate > '2012-09-01'; - Date filter 
+select distinct surname  from cd.members order by surname limit 10; - DISTINCT (all column combinations)/ORDER BY/LIMIT
+
 
 The IN operator is a good early demonstrator of the elegance of the relational model. 
 The argument it takes is not just a list of values - it's actually a table with a single column. 
@@ -37,4 +39,14 @@ We can compare them just like we might a unix timestamp, although getting the
 differences between dates is a little more involved (and powerful!). 
 In this case, we've just specified the date portion of the timestamp. 
 This gets automatically cast by postgres into the full timestamp 2012-09-01 00:00:00.
+
+UNION:
+select surname from cd.members
+union
+select name from cd.facilities;
+
+The UNION operator does what you might expect: combines the results of two SQL queries into a single table. 
+The caveat is that both results from the two queries must have the same number of columns and compatible data types.
+UNION removes duplicate rows, while UNION ALL does not. Use UNION ALL by default, unless you care about duplicate results.
+
 
