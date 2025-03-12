@@ -1,0 +1,40 @@
+; - END
+/50.0 - When divide integer
+like "%Tennis%" - String search
+like "T_nnis%" - One character search
+where joindate > '2012-09-01'; - Date filter
+
+The IN operator is a good early demonstrator of the elegance of the relational model. 
+The argument it takes is not just a list of values - it's actually a table with a single column. 
+Since queries also return tables, if you create a query that returns a single column, you can 
+feed those results into an IN operator. 
+To give a toy example:
+
+select * 
+	from cd.facilities
+	where
+		facid in (
+			select facid from cd.facilities
+			);
+
+This example is functionally equivalent to just selecting all the facilities, 
+but shows you how to feed the results of one query into another. The inner query is called a subquery.
+
+
+USING case
+select name, 
+	case when (monthlymaintenance > 100) then 'expensive'
+	else 'cheap'
+	end as cost
+	from cd.facilities;
+
+Note: To add a 'middling' option, we would simply insert another when...then section.
+
+DATE TIME FORMAT:
+This is our first look at SQL timestamps. 
+They're formatted in descending order of magnitude: YYYY-MM-DD HH:MM:SS.nnnnnn. 
+We can compare them just like we might a unix timestamp, although getting the 
+differences between dates is a little more involved (and powerful!). 
+In this case, we've just specified the date portion of the timestamp. 
+This gets automatically cast by postgres into the full timestamp 2012-09-01 00:00:00.
+
