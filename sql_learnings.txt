@@ -1,11 +1,22 @@
+BASICS:
 ; - END
 /50.0 - When divide integer
 like "%Tennis%" - String search
 like "T_nnis%" - One character search
 where joindate > '2012-09-01'; - Date filter 
 select distinct surname  from cd.members order by surname limit 10; - DISTINCT (all column combinations)/ORDER BY/LIMIT
+UNION - removes duplicate unlike UNION ALL - match column count & data types
+max(date) - only one column data if required then only can be used with select
+
+JOINS & SEQUENCES:
+Inner join - select * from table1 inner join table2 on col1 = col2 where
 
 
+
+
+
+
+--------------------------------BASICS----------
 The IN operator is a good early demonstrator of the elegance of the relational model. 
 The argument it takes is not just a list of values - it's actually a table with a single column. 
 Since queries also return tables, if you create a query that returns a single column, you can 
@@ -49,4 +60,44 @@ The UNION operator does what you might expect: combines the results of two SQL q
 The caveat is that both results from the two queries must have the same number of columns and compatible data types.
 UNION removes duplicate rows, while UNION ALL does not. Use UNION ALL by default, unless you care about duplicate results.
 
+-------------------------------------------------------------------------------------
+select firstname, surname, joindate
+	from cd.members
+	where joindate = 
+		(select max(joindate) 
+			from cd.members);          
+In the suggested approach above, you use a subquery to find out what the most recent joindate is. This subquery returns a scalar table - that is, a table with a single column and a single row. Since we have just a single value, we can substitute the subquery anywhere we might put a single constant value. In this case, we use it to complete the WHERE clause of a query to find a given member.
 
+You might hope that you'd be able to do something like below:
+
+select firstname, surname, max(joindate)
+        from cd.members
+Unfortunately, this doesn't work. The MAX function doesn't restrict rows like the WHERE clause does - it simply takes in a bunch of values and returns the biggest one. The database is then left wondering how to pair up a long list of names with the single join date that's come out of the max function, and fails. Instead, you're left having to say 'find me the row(s) which have a join date that's the same as the maximum join date'.
+
+As mentioned by the hint, there's other ways to get this job done - one example is below. In this approach, rather than explicitly finding out what the last joined date is, we simply order our members table in descending order of join date, and pick off the first one. Note that this approach does not cover the extremely unlikely eventuality of two people joining at the exact same time :-).
+
+select firstname, surname, joindate
+	from cd.members
+order by joindate desc
+limit 1;
+------------------------------END OF BASICS-------------------------------------------------------
+
+
+--------------------------JOINS AND SUBQUERIES---------------------------------
+INNER JOIN:
+select bks.starttime 
+	from 
+		cd.bookings bks
+		inner join cd.members mems
+			on mems.memid = bks.memid
+	where 
+		mems.firstname='David' 
+		and mems.surname='Farrell';          
+
+
+
+
+
+
+
+--------------------------END of SUBQUERIES---------------------------------
